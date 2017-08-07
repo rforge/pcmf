@@ -32,6 +32,7 @@
 #include "gamPoisFactorZI.h"
 #include "gamDistrib.h"
 #include "intermediate.h"
+#include "random.h"
 
 #include <omp.h>
 // [[Rcpp::plugins(openmp)]]
@@ -79,20 +80,21 @@ namespace countMatrixFactor {
     /*!
     * \brief Initialization of sufficient statistics
     */
-    void gamPoisFactorZI::Init() {
+    void gamPoisFactorZI::Init(myRandom::RNGType &rng) {
 
         // Gamma prior parameter (to avoid scaling issue)
         m_alpha1cur = m_alpha1cur.array() / std::sqrt(m_K);
         m_beta1cur = m_beta1cur.array() / std::sqrt(m_K);
 
         // Gamma variational parameter
-        Rcpp::Rcout << "Init: Gamma variational parameter" << std::endl;
+        //Rcpp::Rcout << "Init: Gamma variational parameter" << std::endl;
         for(int k=0; k<m_K; k++) {
             // local parameters
             for(int i=0; i<m_N; i++) {
                 double param1 = 0;
                 double param2 = 0;
-                estimParam(1000, m_alpha1cur(i,k), m_alpha2cur(i,k), param1, param2);
+                estimParam(1000, m_alpha1cur(i,k), m_alpha2cur(i,k),
+                           param1, param2, rng);
                 m_phi1cur(i,k) = param1;
                 m_phi1old(i,k) = param1;
                 m_phi2cur(i,k) = param2;
@@ -102,7 +104,8 @@ namespace countMatrixFactor {
             for(int j=0; j<m_P; j++) {
                 double param1 = 0;
                 double param2 = 0;
-                estimParam(1000, m_beta1cur(j,k), m_beta2cur(j,k), param1, param2);
+                estimParam(1000, m_beta1cur(j,k), m_beta2cur(j,k),
+                           param1, param2, rng);
                 m_theta1cur(j,k) = param1;
                 m_theta1old(j,k) = param1;
                 m_theta2cur(j,k) = param2;
@@ -133,7 +136,7 @@ namespace countMatrixFactor {
         // Rcpp::Rcout << "m_probZI = " << m_probZI.leftCols(15) << std::endl;
 
         // sufficient statistics
-        Rcpp::Rcout << "Init: sufficient statistics" << std::endl;
+        //Rcpp::Rcout << "Init: sufficient statistics" << std::endl;
         Egam(m_phi1cur, m_phi2cur, m_EU);
         Elgam(m_phi1cur, m_phi2cur, m_ElogU);
         Egam(m_theta1cur, m_theta2cur, m_EV);

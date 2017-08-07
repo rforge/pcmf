@@ -1,8 +1,8 @@
 Package: pCMF
 Type: Package
 Title: Factorization of Count Matrices
-Version: 0.6
-Date: 2017-04-19
+Version: 0.8
+Date: 2017-07-18
 Author: Ghislain Durif
 Maintainer: Ghislain Durif <gd.dev@libertymail.net>
 Description: Routines for probabilistic count matrices factorization (pCMF). 
@@ -12,7 +12,8 @@ License: GPL (>= 2)
 Imports:
     Rcpp (>= 0.11.6),
     RcppEigen (>= 0.3.2.5.0),
-    fields
+    fields,
+    ggplot2
 Depends:
     R (>= 3.0)
 LinkingTo: Rcpp, RcppEigen, BH
